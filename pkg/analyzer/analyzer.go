@@ -14,7 +14,7 @@ import (
 
 var Analyzer = &analysis.Analyzer{
 	Name:     "foreshadow",
-	Doc:      "Enforces context shadowing inside loops.",
+	Doc:      "enforce context shadowing inside loops",
 	Run:      run,
 	Requires: []*analysis.Analyzer{inspect.Analyzer},
 }
