@@ -1,4 +1,12 @@
-package contrib
+# foreshadow
+
+`foreshadow` is a Go linter which detects un-shadowed contexts in loops.
+They can lead to performance issues, as documented here: https://gabnotes.org/fat-contexts/
+
+## Example
+
+```go
+package main
 
 import "context"
 
@@ -19,3 +27,4 @@ func notOk() {
 		_ = ctx
 	}
 }
+```
