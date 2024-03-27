@@ -4,5 +4,4 @@ lint:
 
 .PHONY: test
 test:
-	go mod download
 	go test -race -v ./...
