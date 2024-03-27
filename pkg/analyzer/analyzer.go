@@ -3,7 +3,6 @@ package analyzer
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"go/ast"
 	"go/printer"
 	"go/token"
@@ -54,15 +53,20 @@ func run(pass *analysis.Pass) (interface{}, error) {
 				break
 			}
 
-			assignStmt.Tok = token.DEFINE
-			suggested := render(pass.Fset, assignStmt)
+			suggestedStmt := ast.AssignStmt{
+				Lhs:    assignStmt.Lhs,
+				TokPos: assignStmt.TokPos,
+				Tok:    token.DEFINE,
+				Rhs:    assignStmt.Rhs,
+			}
+			suggested := render(pass.Fset, &suggestedStmt)
 
 			pass.Report(analysis.Diagnostic{
 				Pos:     assignStmt.Pos(),
 				Message: "context not shadowed in loop",
 				SuggestedFixes: []analysis.SuggestedFix{
 					{
-						Message: fmt.Sprintf("replace `=` with `:=`"),
+						Message: "replace `=` with `:=`",
 						TextEdits: []analysis.TextEdit{
 							{
 								Pos:     assignStmt.Pos(),
