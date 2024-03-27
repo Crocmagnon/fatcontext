@@ -11,18 +11,18 @@ func example() {
 	}
 
 	for i := 0; i < 10; i++ {
-		ctx = context.WithValue(ctx, "key", i) // want "context not shadowed in loop"
+		ctx = context.WithValue(ctx, "key", i) // want "nested context in loop"
 		ctx = context.WithValue(ctx, "other", "val")
 	}
 
 	for item := range []string{"one", "two", "three"} {
-		ctx = wrapContext(ctx) // want "context not shadowed in loop"
+		ctx = wrapContext(ctx) // want "nested context in loop"
 		ctx := context.WithValue(ctx, "key", item)
 		ctx = wrapContext(ctx)
 	}
 
 	for {
-		ctx = wrapContext(ctx) // want "context not shadowed in loop"
+		ctx = wrapContext(ctx) // want "nested context in loop"
 		break
 	}
 }

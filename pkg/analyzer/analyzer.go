@@ -12,8 +12,8 @@ import (
 )
 
 var Analyzer = &analysis.Analyzer{
-	Name:     "foreshadow",
-	Doc:      "enforce context shadowing inside loops",
+	Name:     "fatcontext",
+	Doc:      "detects nested contexts in loops",
 	Run:      run,
 	Requires: []*analysis.Analyzer{inspect.Analyzer},
 }
@@ -63,7 +63,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 
 			pass.Report(analysis.Diagnostic{
 				Pos:     assignStmt.Pos(),
-				Message: "context not shadowed in loop",
+				Message: "nested context in loop",
 				SuggestedFixes: []analysis.SuggestedFix{
 					{
 						Message: "replace `=` with `:=`",

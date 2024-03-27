@@ -1,6 +1,6 @@
-# foreshadow
+# fatcontext
 
-`foreshadow` is a Go linter which detects un-shadowed contexts in loops.
+`fatcontext` is a Go linter which detects potential fat contexts in loops.
 They can lead to performance issues, as documented here: https://gabnotes.org/fat-contexts/
 
 ## Example
@@ -23,7 +23,7 @@ func notOk() {
 	ctx := context.Background()
 
 	for i := 0; i < 10; i++ {
-		ctx = context.WithValue(ctx, "key", i) // "context not shadowed in loop"
+		ctx = context.WithValue(ctx, "key", i) // "nested context in loop"
 		_ = ctx
 	}
 }

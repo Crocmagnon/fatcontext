@@ -20,7 +20,7 @@ builds:
       - linux
       - windows
       - darwin
-    main: ./cmd/foreshadow
+    main: ./cmd/fatcontext
 
 archives:
   - format: tar.gz

@@ -1,7 +1,7 @@
 package analyzer_test
 
 import (
-	"github.com/Crocmagnon/foreshadow/pkg/analyzer"
+	"github.com/Crocmagnon/fatcontext/pkg/analyzer"
 	"golang.org/x/tools/go/analysis/analysistest"
 	"os"
 	"path/filepath"

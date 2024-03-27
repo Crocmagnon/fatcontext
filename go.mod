@@ -1,4 +1,4 @@
-module github.com/Crocmagnon/foreshadow
+module github.com/Crocmagnon/fatcontext
 
 go 1.21
 
