@@ -8,6 +8,8 @@
 
 version: 1
 
+force_token: github
+
 before:
   hooks:
     - go mod tidy
