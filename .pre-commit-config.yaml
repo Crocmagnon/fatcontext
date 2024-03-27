@@ -12,3 +12,10 @@ repos:
     rev: v1.57.1
     hooks:
       - id: golangci-lint-full
+  - repo: local
+    hooks:
+      - id: go-test
+        name: go test ./...
+        language: golang
+        types_or: [go]
+        entry: make test

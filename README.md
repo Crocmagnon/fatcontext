@@ -28,3 +28,21 @@ func notOk() {
 	}
 }
 ```
+
+## Development
+
+Setup pre-commit locally:
+```bash
+pre-commit install
+```
+
+Run tests & linter:
+```bash
+make lint test
+```
+
+To release, just publish a git tag:
+```bash
+git tag -a v0.1.0 -m "v0.1.0"
+git push --follow-tags
+```
