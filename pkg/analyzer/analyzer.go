@@ -3,6 +3,7 @@ package analyzer
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"go/ast"
 	"go/printer"
 	"go/token"
@@ -59,23 +60,26 @@ func run(pass *analysis.Pass) (interface{}, error) {
 				Tok:    token.DEFINE,
 				Rhs:    assignStmt.Rhs,
 			}
-			suggested := render(pass.Fset, &suggestedStmt)
+			suggested, err := render(pass.Fset, &suggestedStmt)
 
-			pass.Report(analysis.Diagnostic{
-				Pos:     assignStmt.Pos(),
-				Message: "nested context in loop",
-				SuggestedFixes: []analysis.SuggestedFix{
-					{
-						Message: "replace `=` with `:=`",
-						TextEdits: []analysis.TextEdit{
-							{
-								Pos:     assignStmt.Pos(),
-								End:     assignStmt.End(),
-								NewText: []byte(suggested),
-							},
+			var fixes []analysis.SuggestedFix
+			if err == nil {
+				fixes = append(fixes, analysis.SuggestedFix{
+					Message: "replace `=` with `:=`",
+					TextEdits: []analysis.TextEdit{
+						{
+							Pos:     assignStmt.Pos(),
+							End:     assignStmt.End(),
+							NewText: []byte(suggested),
 						},
 					},
-				},
+				})
+			}
+
+			pass.Report(analysis.Diagnostic{
+				Pos:            assignStmt.Pos(),
+				Message:        "nested context in loop",
+				SuggestedFixes: fixes,
 			})
 
 			break
@@ -100,10 +104,10 @@ func getBody(node ast.Node) (*ast.BlockStmt, error) {
 }
 
 // render returns the pretty-print of the given node
-func render(fset *token.FileSet, x interface{}) string {
+func render(fset *token.FileSet, x interface{}) (string, error) {
 	var buf bytes.Buffer
 	if err := printer.Fprint(&buf, fset, x); err != nil {
-		panic(err)
+		return "", fmt.Errorf("printing node: %w", err)
 	}
-	return buf.String()
+	return buf.String(), nil
 }
