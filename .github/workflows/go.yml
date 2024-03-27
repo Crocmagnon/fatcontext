@@ -16,7 +16,7 @@ jobs:
       matrix:
         go: ['1.21', '1.22']
         os: [macos-latest, windows-latest, ubuntu-latest]
-    name: lint
+    name: build
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
