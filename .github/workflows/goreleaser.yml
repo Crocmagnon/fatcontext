@@ -9,7 +9,6 @@ permissions:
 
 jobs:
   goreleaser:
-    needs: [build, golangci]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
