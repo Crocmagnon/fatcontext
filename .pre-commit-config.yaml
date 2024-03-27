@@ -1,5 +1,5 @@
 ci:
-  skip: [golangci-lint-full]
+  skip: [golangci-lint-full, go-test]
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
