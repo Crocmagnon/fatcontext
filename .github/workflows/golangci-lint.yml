@@ -16,9 +16,8 @@ jobs:
     strategy:
       matrix:
         go: ['1.21', '1.22']
-        os: [macos-latest, windows-latest, ubuntu-latest]
     name: lint
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
