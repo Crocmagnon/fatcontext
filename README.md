@@ -3,6 +3,17 @@
 `fatcontext` is a Go linter which detects potential fat contexts in loops.
 They can lead to performance issues, as documented here: https://gabnotes.org/fat-contexts/
 
+## Installation / usage
+
+`fatcontext` is available in `golangci-lint` since v1.58.0.
+
+```bash
+go install github.com/Crocmagnon/fatcontext/cmd/fatcontext@latest
+fatcontext ./...
+```
+
+There are no specific configuration options or custom command-line flags.
+
 ## Example
 
 ```go
