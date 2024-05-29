@@ -55,10 +55,11 @@ func run(pass *analysis.Pass) (interface{}, error) {
 				break
 			}
 
+			// allow assignment to non-pointer children of values defined within the loop
 			if lhs := getRootIdent(pass, assignStmt.Lhs[0]); lhs != nil {
 				if obj := pass.TypesInfo.ObjectOf(lhs); obj != nil {
 					if obj.Pos() >= body.Pos() && obj.Pos() < body.End() {
-						continue
+						continue // definition is within the loop
 					}
 				}
 			}
