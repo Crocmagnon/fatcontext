@@ -7,6 +7,7 @@ import (
 	"go/ast"
 	"go/printer"
 	"go/token"
+
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/inspect"
 	"golang.org/x/tools/go/ast/inspector"
@@ -52,6 +53,14 @@ func run(pass *analysis.Pass) (interface{}, error) {
 
 			if assignStmt.Tok == token.DEFINE {
 				break
+			}
+
+			if lhs := getRootIdent(pass, assignStmt.Lhs[0]); lhs != nil {
+				if obj := pass.TypesInfo.ObjectOf(lhs); obj != nil {
+					if obj.Pos() >= body.Pos() && obj.Pos() < body.End() {
+						continue
+					}
+				}
 			}
 
 			suggestedStmt := ast.AssignStmt{
@@ -101,6 +110,24 @@ func getBody(node ast.Node) (*ast.BlockStmt, error) {
 	}
 
 	return nil, errUnknown
+}
+
+func getRootIdent(pass *analysis.Pass, node ast.Node) *ast.Ident {
+	for {
+		switch n := node.(type) {
+		case *ast.Ident:
+			return n
+		case *ast.IndexExpr:
+			node = n.X
+		case *ast.SelectorExpr:
+			if sel, ok := pass.TypesInfo.Selections[n]; ok && sel.Indirect() {
+				return nil // indirected (pointer) roots don't imply a (safe) copy
+			}
+			node = n.X
+		default:
+			return nil
+		}
+	}
 }
 
 // render returns the pretty-print of the given node
