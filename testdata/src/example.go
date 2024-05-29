@@ -59,9 +59,15 @@ func inStructs(ctx context.Context) {
 		c.Ctx = context.WithValue(c.Ctx, "other", "val")
 	}
 
+	r := []struct{ Ctx context.Context }{{ctx}}
 	for i := 0; i < 10; i++ {
-		c := []*struct{ Ctx context.Context }{{ctx}}
-		c[0].Ctx = context.WithValue(c[0].Ctx, "key", i) // want "nested context in loop"
-		c[0].Ctx = context.WithValue(c[0].Ctx, "other", "val")
+		r[0].Ctx = context.WithValue(r[0].Ctx, "key", i) // want "nested context in loop"
+		r[0].Ctx = context.WithValue(r[0].Ctx, "other", "val")
+	}
+
+	rp := []*struct{ Ctx context.Context }{{ctx}}
+	for i := 0; i < 10; i++ {
+		rp[0].Ctx = context.WithValue(rp[0].Ctx, "key", i) // want "nested context in loop"
+		rp[0].Ctx = context.WithValue(rp[0].Ctx, "other", "val")
 	}
 }
