@@ -25,10 +25,48 @@ func example() {
 		ctx = wrapContext(ctx) // want "nested context in loop"
 		break
 	}
+
+	// not fooled by shadowing in nested blocks
+	for {
+		err := doSomething()
+		if err != nil {
+			ctx := wrapContext(ctx)
+			ctx = wrapContext(ctx)
+		}
+
+		switch err {
+		case nil:
+			ctx := wrapContext(ctx)
+			ctx = wrapContext(ctx)
+		default:
+			ctx := wrapContext(ctx)
+			ctx = wrapContext(ctx)
+		}
+
+		{
+			ctx := wrapContext(ctx)
+			ctx = wrapContext(ctx)
+		}
+
+		select {
+		case <-ctx.Done():
+			ctx := wrapContext(ctx)
+			ctx = wrapContext(ctx)
+		default:
+		}
+
+		ctx = wrapContext(ctx) // want "nested context in loop"
+
+		break
+	}
 }
 
 func wrapContext(ctx context.Context) context.Context {
 	return context.WithoutCancel(ctx)
+}
+
+func doSomething() error {
+	return nil
 }
 
 // storing contexts in a struct isn't recommended, but local copies of a non-pointer struct should act like local copies of a context.
@@ -69,5 +107,76 @@ func inStructs(ctx context.Context) {
 	for i := 0; i < 10; i++ {
 		rp[0].Ctx = context.WithValue(rp[0].Ctx, "key", i) // want "nested context in loop"
 		rp[0].Ctx = context.WithValue(rp[0].Ctx, "other", "val")
+	}
+}
+
+func inVariousNestedBlocks(ctx context.Context) {
+	for {
+		err := doSomething()
+		if err != nil {
+			ctx = wrapContext(ctx) // want "nested context in loop"
+		}
+
+		break
+	}
+
+	for {
+		err := doSomething()
+		if err != nil {
+			if true {
+				ctx = wrapContext(ctx) // want "nested context in loop"
+			}
+		}
+
+		break
+	}
+
+	for {
+		err := doSomething()
+		switch err {
+		case nil:
+			ctx = wrapContext(ctx) // want "nested context in loop"
+		}
+
+		break
+	}
+
+	for {
+		err := doSomething()
+		switch err {
+		default:
+			ctx = wrapContext(ctx) // want "nested context in loop"
+		}
+
+		break
+	}
+
+	for {
+		ctx := wrapContext(ctx)
+
+		err := doSomething()
+		if err != nil {
+			ctx = wrapContext(ctx)
+		}
+
+		break
+	}
+
+	for {
+		{
+			ctx = wrapContext(ctx) // want "nested context in loop"
+		}
+
+		break
+	}
+
+	for {
+		select {
+		case <-ctx.Done():
+			ctx = wrapContext(ctx) // want "nested context in loop"
+		default:
+		}
+
+		break
 	}
 }
