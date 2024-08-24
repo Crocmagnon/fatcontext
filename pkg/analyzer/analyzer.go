@@ -28,6 +28,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 	nodeFilter := []ast.Node{
 		(*ast.ForStmt)(nil),
 		(*ast.RangeStmt)(nil),
+		(*ast.FuncLit)(nil),
 	}
 
 	inspctr.Preorder(nodeFilter, func(node ast.Node) {
@@ -65,13 +66,26 @@ func run(pass *analysis.Pass) (interface{}, error) {
 
 		pass.Report(analysis.Diagnostic{
 			Pos:            assignStmt.Pos(),
-			Message:        "nested context in loop",
+			Message:        getReportMessage(node),
 			SuggestedFixes: fixes,
 		})
 
 	})
 
 	return nil, nil
+}
+
+func getReportMessage(node ast.Node) string {
+	switch node.(type) {
+	case *ast.ForStmt:
+		return "nested context in loop"
+	case *ast.RangeStmt:
+		return "nested context in loop"
+	case *ast.FuncLit:
+		return "nested context in function literal"
+	default:
+		return "nested context"
+	}
 }
 
 func getBody(node ast.Node) (*ast.BlockStmt, error) {
@@ -83,6 +97,11 @@ func getBody(node ast.Node) (*ast.BlockStmt, error) {
 	rangeStmt, ok := node.(*ast.RangeStmt)
 	if ok {
 		return rangeStmt.Body, nil
+	}
+
+	funcLit, ok := node.(*ast.FuncLit)
+	if ok {
+		return funcLit.Body, nil
 	}
 
 	return nil, errUnknown

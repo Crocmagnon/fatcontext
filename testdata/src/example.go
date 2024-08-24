@@ -59,6 +59,12 @@ func example() {
 
 		break
 	}
+
+	// detects contexts wrapped in function literals (this is risky as function literals can be called multiple times)
+	_ = func() {
+		ctx = wrapContext(ctx) // want "nested context in function literal"
+	}
+
 }
 
 func wrapContext(ctx context.Context) context.Context {
@@ -178,5 +184,13 @@ func inVariousNestedBlocks(ctx context.Context) {
 		}
 
 		break
+	}
+}
+
+// this middleware could run on every request, bloating the request parameter level context and causing a memory leak
+func memoryLeakCausingMiddleware(ctx context.Context) func(ctx context.Context) error {
+	return func(ctx context.Context) error {
+		ctx = wrapContext(ctx) // want "nested context in function literal"
+		return doSomething()
 	}
 }
