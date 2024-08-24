@@ -85,7 +85,7 @@ func getReportMessage(node ast.Node) string {
 	case *ast.FuncLit:
 		return "nested context in function literal"
 	default:
-		return "nested context"
+		return "unsupported nested context type"
 	}
 }
 
