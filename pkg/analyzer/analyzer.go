@@ -7,6 +7,7 @@ import (
 	"go/ast"
 	"go/printer"
 	"go/token"
+	"go/types"
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/inspect"
@@ -174,7 +175,7 @@ func findNestedContext(pass *analysis.Pass, block *ast.BlockStmt, stmts []ast.St
 		// allow assignment to non-pointer children of values defined within the loop
 		if lhs := getRootIdent(pass, assignStmt.Lhs[0]); lhs != nil {
 			if obj := pass.TypesInfo.ObjectOf(lhs); obj != nil {
-				if obj.Pos() >= block.Pos() && obj.Pos() < block.End() {
+				if checkObjectScopeWithinBlock(obj.Parent(), block) {
 					continue // definition is within the loop
 				}
 			}
@@ -184,6 +185,18 @@ func findNestedContext(pass *analysis.Pass, block *ast.BlockStmt, stmts []ast.St
 	}
 
 	return nil
+}
+
+func checkObjectScopeWithinBlock(scope *types.Scope, block *ast.BlockStmt) bool {
+	if scope == nil {
+		return false
+	}
+
+	if scope.Pos() >= block.Pos() && scope.End() <= block.End() {
+		return true
+	}
+
+	return false
 }
 
 func getRootIdent(pass *analysis.Pass, node ast.Node) *ast.Ident {

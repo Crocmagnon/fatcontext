@@ -188,9 +188,29 @@ func inVariousNestedBlocks(ctx context.Context) {
 }
 
 // this middleware could run on every request, bloating the request parameter level context and causing a memory leak
-func memoryLeakCausingMiddleware(ctx context.Context) func(ctx context.Context) error {
-	return func(ctx context.Context) error {
+func badMiddleware(ctx context.Context) func() error {
+	return func() error {
 		ctx = wrapContext(ctx) // want "nested context in function literal"
-		return doSomething()
+		return doSomethingWithCtx(ctx)
 	}
+}
+
+// this middleware is fine, as it doesn't modify the context of parent function
+func okMiddleware(ctx context.Context) func() error {
+	return func() error {
+		ctx := wrapContext(ctx)
+		return doSomethingWithCtx(ctx)
+	}
+}
+
+// this middleware is fine, as it only modifies the context passed to it
+func okMiddleware2(ctx context.Context) func(ctx context.Context) error {
+	return func(ctx context.Context) error {
+		ctx = wrapContext(ctx)
+		return doSomethingWithCtx(ctx)
+	}
+}
+
+func doSomethingWithCtx(ctx context.Context) error {
+	return nil
 }
