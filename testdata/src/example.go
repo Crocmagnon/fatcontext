@@ -65,6 +65,12 @@ func example() {
 		ctx = wrapContext(ctx) // want "nested context in function literal"
 	}
 
+	// this is fine because the context is created in the loop
+	for {
+		if ctx := context.Background(); doSomething() != nil {
+			ctx = wrapContext(ctx)
+		}
+	}
 }
 
 func wrapContext(ctx context.Context) context.Context {
