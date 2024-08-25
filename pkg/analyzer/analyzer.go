@@ -38,7 +38,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			return
 		}
 
-		assignStmt := findNestedContext(pass, body, body.List)
+		assignStmt := findNestedContext(pass, node, body.List)
 		if assignStmt == nil {
 			return
 		}
@@ -108,7 +108,7 @@ func getBody(node ast.Node) (*ast.BlockStmt, error) {
 	return nil, errUnknown
 }
 
-func findNestedContext(pass *analysis.Pass, block *ast.BlockStmt, stmts []ast.Stmt) *ast.AssignStmt {
+func findNestedContext(pass *analysis.Pass, node ast.Node, stmts []ast.Stmt) *ast.AssignStmt {
 	for _, stmt := range stmts {
 		// Recurse if necessary
 		if inner, ok := stmt.(*ast.BlockStmt); ok {
@@ -119,35 +119,35 @@ func findNestedContext(pass *analysis.Pass, block *ast.BlockStmt, stmts []ast.St
 		}
 
 		if inner, ok := stmt.(*ast.IfStmt); ok {
-			found := findNestedContext(pass, inner.Body, inner.Body.List)
+			found := findNestedContext(pass, inner, inner.Body.List)
 			if found != nil {
 				return found
 			}
 		}
 
 		if inner, ok := stmt.(*ast.SwitchStmt); ok {
-			found := findNestedContext(pass, inner.Body, inner.Body.List)
+			found := findNestedContext(pass, inner, inner.Body.List)
 			if found != nil {
 				return found
 			}
 		}
 
 		if inner, ok := stmt.(*ast.CaseClause); ok {
-			found := findNestedContext(pass, block, inner.Body)
+			found := findNestedContext(pass, node, inner.Body)
 			if found != nil {
 				return found
 			}
 		}
 
 		if inner, ok := stmt.(*ast.SelectStmt); ok {
-			found := findNestedContext(pass, inner.Body, inner.Body.List)
+			found := findNestedContext(pass, inner, inner.Body.List)
 			if found != nil {
 				return found
 			}
 		}
 
 		if inner, ok := stmt.(*ast.CommClause); ok {
-			found := findNestedContext(pass, block, inner.Body)
+			found := findNestedContext(pass, node, inner.Body)
 			if found != nil {
 				return found
 			}
@@ -175,7 +175,7 @@ func findNestedContext(pass *analysis.Pass, block *ast.BlockStmt, stmts []ast.St
 		// allow assignment to non-pointer children of values defined within the loop
 		if lhs := getRootIdent(pass, assignStmt.Lhs[0]); lhs != nil {
 			if obj := pass.TypesInfo.ObjectOf(lhs); obj != nil {
-				if checkObjectScopeWithinBlock(obj.Parent(), block) {
+				if checkObjectScopeWithinNode(obj.Parent(), node) {
 					continue // definition is within the loop
 				}
 			}
@@ -187,12 +187,12 @@ func findNestedContext(pass *analysis.Pass, block *ast.BlockStmt, stmts []ast.St
 	return nil
 }
 
-func checkObjectScopeWithinBlock(scope *types.Scope, block *ast.BlockStmt) bool {
+func checkObjectScopeWithinNode(scope *types.Scope, node ast.Node) bool {
 	if scope == nil {
 		return false
 	}
 
-	if scope.Pos() >= block.Pos() && scope.End() <= block.End() {
+	if scope.Pos() >= node.Pos() && scope.End() <= node.End() {
 		return true
 	}
 
