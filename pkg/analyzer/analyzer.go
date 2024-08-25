@@ -78,9 +78,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 
 func getReportMessage(node ast.Node) string {
 	switch node.(type) {
-	case *ast.ForStmt:
-		return "nested context in loop"
-	case *ast.RangeStmt:
+	case *ast.ForStmt, *ast.RangeStmt:
 		return "nested context in loop"
 	case *ast.FuncLit:
 		return "nested context in function literal"
