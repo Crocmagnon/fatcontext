@@ -71,6 +71,14 @@ func example() {
 			ctx = wrapContext(ctx)
 		}
 	}
+
+	for {
+		ctx2 := context.Background()
+		ctx = wrapContext(ctx) // want "nested context in loop"
+		if doSomething() != nil {
+			ctx2 = wrapContext(ctx2)
+		}
+	}
 }
 
 func wrapContext(ctx context.Context) context.Context {

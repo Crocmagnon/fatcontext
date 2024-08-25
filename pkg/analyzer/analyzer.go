@@ -110,21 +110,21 @@ func findNestedContext(pass *analysis.Pass, node ast.Node, stmts []ast.Stmt) *as
 	for _, stmt := range stmts {
 		// Recurse if necessary
 		if inner, ok := stmt.(*ast.BlockStmt); ok {
-			found := findNestedContext(pass, inner, inner.List)
+			found := findNestedContext(pass, node, inner.List)
 			if found != nil {
 				return found
 			}
 		}
 
 		if inner, ok := stmt.(*ast.IfStmt); ok {
-			found := findNestedContext(pass, inner, inner.Body.List)
+			found := findNestedContext(pass, node, inner.Body.List)
 			if found != nil {
 				return found
 			}
 		}
 
 		if inner, ok := stmt.(*ast.SwitchStmt); ok {
-			found := findNestedContext(pass, inner, inner.Body.List)
+			found := findNestedContext(pass, node, inner.Body.List)
 			if found != nil {
 				return found
 			}
@@ -138,7 +138,7 @@ func findNestedContext(pass *analysis.Pass, node ast.Node, stmts []ast.Stmt) *as
 		}
 
 		if inner, ok := stmt.(*ast.SelectStmt); ok {
-			found := findNestedContext(pass, inner, inner.Body.List)
+			found := findNestedContext(pass, node, inner.Body.List)
 			if found != nil {
 				return found
 			}
@@ -167,7 +167,7 @@ func findNestedContext(pass *analysis.Pass, node ast.Node, stmts []ast.Stmt) *as
 		}
 
 		if assignStmt.Tok == token.DEFINE {
-			break
+			continue
 		}
 
 		// allow assignment to non-pointer children of values defined within the loop
