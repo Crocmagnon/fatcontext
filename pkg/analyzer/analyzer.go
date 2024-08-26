@@ -16,7 +16,7 @@ import (
 
 var Analyzer = &analysis.Analyzer{
 	Name:     "fatcontext",
-	Doc:      "detects nested contexts in loops",
+	Doc:      "detects nested contexts in loops and function literals",
 	Run:      run,
 	Requires: []*analysis.Analyzer{inspect.Analyzer},
 }
@@ -70,7 +70,6 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			Message:        getReportMessage(node),
 			SuggestedFixes: fixes,
 		})
-
 	})
 
 	return nil, nil
