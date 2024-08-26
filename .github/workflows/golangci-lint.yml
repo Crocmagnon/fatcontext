@@ -16,7 +16,7 @@ jobs:
   golangci:
     strategy:
       matrix:
-        go: ['1.21', '1.22']
+        go: ['1.22', '1.23']
     name: lint
     runs-on: ubuntu-latest
     steps:
