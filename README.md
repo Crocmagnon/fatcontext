@@ -1,6 +1,6 @@
 # fatcontext
 
-`fatcontext` is a Go linter which detects potential fat contexts in loops.
+`fatcontext` is a Go linter which detects potential fat contexts in loops or function literals.
 They can lead to performance issues, as documented here: https://gabnotes.org/fat-contexts/
 
 ## Installation / usage
