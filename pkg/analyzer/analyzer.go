@@ -7,6 +7,7 @@ import (
 	"go/ast"
 	"go/printer"
 	"go/token"
+	"go/types"
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/inspect"
@@ -28,6 +29,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 	nodeFilter := []ast.Node{
 		(*ast.ForStmt)(nil),
 		(*ast.RangeStmt)(nil),
+		(*ast.FuncLit)(nil),
 	}
 
 	inspctr.Preorder(nodeFilter, func(node ast.Node) {
@@ -36,7 +38,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			return
 		}
 
-		assignStmt := findNestedContext(pass, body, body.List)
+		assignStmt := findNestedContext(pass, node, body.List)
 		if assignStmt == nil {
 			return
 		}
@@ -65,13 +67,24 @@ func run(pass *analysis.Pass) (interface{}, error) {
 
 		pass.Report(analysis.Diagnostic{
 			Pos:            assignStmt.Pos(),
-			Message:        "nested context in loop",
+			Message:        getReportMessage(node),
 			SuggestedFixes: fixes,
 		})
 
 	})
 
 	return nil, nil
+}
+
+func getReportMessage(node ast.Node) string {
+	switch node.(type) {
+	case *ast.ForStmt, *ast.RangeStmt:
+		return "nested context in loop"
+	case *ast.FuncLit:
+		return "nested context in function literal"
+	default:
+		return "unsupported nested context type"
+	}
 }
 
 func getBody(node ast.Node) (*ast.BlockStmt, error) {
@@ -85,49 +98,54 @@ func getBody(node ast.Node) (*ast.BlockStmt, error) {
 		return rangeStmt.Body, nil
 	}
 
+	funcLit, ok := node.(*ast.FuncLit)
+	if ok {
+		return funcLit.Body, nil
+	}
+
 	return nil, errUnknown
 }
 
-func findNestedContext(pass *analysis.Pass, block *ast.BlockStmt, stmts []ast.Stmt) *ast.AssignStmt {
+func findNestedContext(pass *analysis.Pass, node ast.Node, stmts []ast.Stmt) *ast.AssignStmt {
 	for _, stmt := range stmts {
 		// Recurse if necessary
 		if inner, ok := stmt.(*ast.BlockStmt); ok {
-			found := findNestedContext(pass, inner, inner.List)
+			found := findNestedContext(pass, node, inner.List)
 			if found != nil {
 				return found
 			}
 		}
 
 		if inner, ok := stmt.(*ast.IfStmt); ok {
-			found := findNestedContext(pass, inner.Body, inner.Body.List)
+			found := findNestedContext(pass, node, inner.Body.List)
 			if found != nil {
 				return found
 			}
 		}
 
 		if inner, ok := stmt.(*ast.SwitchStmt); ok {
-			found := findNestedContext(pass, inner.Body, inner.Body.List)
+			found := findNestedContext(pass, node, inner.Body.List)
 			if found != nil {
 				return found
 			}
 		}
 
 		if inner, ok := stmt.(*ast.CaseClause); ok {
-			found := findNestedContext(pass, block, inner.Body)
+			found := findNestedContext(pass, node, inner.Body)
 			if found != nil {
 				return found
 			}
 		}
 
 		if inner, ok := stmt.(*ast.SelectStmt); ok {
-			found := findNestedContext(pass, inner.Body, inner.Body.List)
+			found := findNestedContext(pass, node, inner.Body.List)
 			if found != nil {
 				return found
 			}
 		}
 
 		if inner, ok := stmt.(*ast.CommClause); ok {
-			found := findNestedContext(pass, block, inner.Body)
+			found := findNestedContext(pass, node, inner.Body)
 			if found != nil {
 				return found
 			}
@@ -149,13 +167,13 @@ func findNestedContext(pass *analysis.Pass, block *ast.BlockStmt, stmts []ast.St
 		}
 
 		if assignStmt.Tok == token.DEFINE {
-			break
+			continue
 		}
 
 		// allow assignment to non-pointer children of values defined within the loop
 		if lhs := getRootIdent(pass, assignStmt.Lhs[0]); lhs != nil {
 			if obj := pass.TypesInfo.ObjectOf(lhs); obj != nil {
-				if obj.Pos() >= block.Pos() && obj.Pos() < block.End() {
+				if checkObjectScopeWithinNode(obj.Parent(), node) {
 					continue // definition is within the loop
 				}
 			}
@@ -165,6 +183,18 @@ func findNestedContext(pass *analysis.Pass, block *ast.BlockStmt, stmts []ast.St
 	}
 
 	return nil
+}
+
+func checkObjectScopeWithinNode(scope *types.Scope, node ast.Node) bool {
+	if scope == nil {
+		return false
+	}
+
+	if scope.Pos() >= node.Pos() && scope.End() <= node.End() {
+		return true
+	}
+
+	return false
 }
 
 func getRootIdent(pass *analysis.Pass, node ast.Node) *ast.Ident {
