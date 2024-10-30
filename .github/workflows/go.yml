@@ -33,6 +33,8 @@ jobs:
     name: coverage
     permissions:
       contents: write
+    concurrency:
+      group: coverage
     runs-on: ubuntu-latest
     needs: [build]
     steps:
