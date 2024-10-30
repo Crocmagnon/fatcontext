@@ -1,5 +1,8 @@
 # fatcontext
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/Crocmagnon/fatcontext.svg)](https://pkg.go.dev/github.com/Crocmagnon/fatcontext)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Crocmagnon/fatcontext)](https://goreportcard.com/report/github.com/Crocmagnon/fatcontext)
+
 `fatcontext` is a Go linter which detects potential fat contexts in loops or function literals.
 They can lead to performance issues, as documented here: https://gabnotes.org/fat-contexts/
 
