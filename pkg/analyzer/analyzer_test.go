@@ -1,11 +1,13 @@
 package analyzer_test
 
 import (
-	"github.com/Crocmagnon/fatcontext/pkg/analyzer"
-	"golang.org/x/tools/go/analysis/analysistest"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"golang.org/x/tools/go/analysis/analysistest"
+
+	"github.com/Crocmagnon/fatcontext/pkg/analyzer"
 )
 
 func TestAll(t *testing.T) {

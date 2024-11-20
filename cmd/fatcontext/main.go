@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/Crocmagnon/fatcontext/pkg/analyzer"
 	"golang.org/x/tools/go/analysis/singlechecker"
+
+	"github.com/Crocmagnon/fatcontext/pkg/analyzer"
 )
 
 func main() {
