@@ -1,6 +1,9 @@
 package src
 
-import "context"
+import (
+	"context"
+	"testing"
+)
 
 func example() {
 	ctx := context.Background()
@@ -227,4 +230,22 @@ func okMiddleware2(ctx context.Context) func(ctx context.Context) error {
 
 func doSomethingWithCtx(ctx context.Context) error {
 	return nil
+}
+
+func testCasesInit(t *testing.T) {
+	cases := []struct {
+		ctx context.Context
+	}{
+		{},
+		{
+			ctx: context.WithValue(context.Background(), "key", "value"),
+		},
+	}
+	for _, tc := range cases {
+		t.Run("some test", func(t *testing.T) {
+			if tc.ctx == nil {
+				tc.ctx = context.Background()
+			}
+		})
+	}
 }
