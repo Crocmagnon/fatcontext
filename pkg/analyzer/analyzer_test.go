@@ -10,12 +10,28 @@ import (
 	"github.com/Crocmagnon/fatcontext/pkg/analyzer"
 )
 
-func TestAll(t *testing.T) {
+func TestAnalyzer(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatalf("Failed to get wd: %s", err)
 	}
-	testdata := filepath.Join(filepath.Dir(filepath.Dir(wd)), "testdata")
+	testdata := filepath.Join(wd, "testdata")
 
-	analysistest.Run(t, testdata, analyzer.Analyzer, "./...")
+	t.Run("no func decl", func(t *testing.T) {
+		an := analyzer.NewAnalyzer()
+		analysistest.Run(t, testdata, an, "./common")
+		analysistest.Run(t, testdata, an, "./no_structpointer")
+	})
+
+	t.Run("func decl", func(t *testing.T) {
+		an := analyzer.NewAnalyzer()
+
+		err := an.Flags.Set(analyzer.FlagCheckStructPointers, "true")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		analysistest.Run(t, testdata, an, "./common")
+		analysistest.Run(t, testdata, an, "./structpointer")
+	})
 }

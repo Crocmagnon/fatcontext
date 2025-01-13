@@ -16,8 +16,6 @@ go install github.com/Crocmagnon/fatcontext/cmd/fatcontext@latest
 fatcontext ./...
 ```
 
-There are no specific configuration options or custom command-line flags.
-
 ## Example
 
 ```go
