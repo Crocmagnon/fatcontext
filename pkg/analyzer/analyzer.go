@@ -156,44 +156,29 @@ func getBody(node ast.Node) (*ast.BlockStmt, error) {
 func findNestedContext(pass *analysis.Pass, node ast.Node, stmts []ast.Stmt) *ast.AssignStmt {
 	for _, stmt := range stmts {
 		// Recurse if necessary
-		if inner, ok := stmt.(*ast.BlockStmt); ok {
-			found := findNestedContext(pass, node, inner.List)
-			if found != nil {
+		switch typedStmt := stmt.(type) {
+		case *ast.BlockStmt:
+			if found := findNestedContext(pass, node, typedStmt.List); found != nil {
 				return found
 			}
-		}
-
-		if inner, ok := stmt.(*ast.IfStmt); ok {
-			found := findNestedContext(pass, node, inner.Body.List)
-			if found != nil {
+		case *ast.IfStmt:
+			if found := findNestedContext(pass, node, typedStmt.Body.List); found != nil {
 				return found
 			}
-		}
-
-		if inner, ok := stmt.(*ast.SwitchStmt); ok {
-			found := findNestedContext(pass, node, inner.Body.List)
-			if found != nil {
+		case *ast.SwitchStmt:
+			if found := findNestedContext(pass, node, typedStmt.Body.List); found != nil {
 				return found
 			}
-		}
-
-		if inner, ok := stmt.(*ast.CaseClause); ok {
-			found := findNestedContext(pass, node, inner.Body)
-			if found != nil {
+		case *ast.CaseClause:
+			if found := findNestedContext(pass, node, typedStmt.Body); found != nil {
 				return found
 			}
-		}
-
-		if inner, ok := stmt.(*ast.SelectStmt); ok {
-			found := findNestedContext(pass, node, inner.Body.List)
-			if found != nil {
+		case *ast.SelectStmt:
+			if found := findNestedContext(pass, node, typedStmt.Body.List); found != nil {
 				return found
 			}
-		}
-
-		if inner, ok := stmt.(*ast.CommClause); ok {
-			found := findNestedContext(pass, node, inner.Body)
-			if found != nil {
+		case *ast.CommClause:
+			if found := findNestedContext(pass, node, typedStmt.Body); found != nil {
 				return found
 			}
 		}
