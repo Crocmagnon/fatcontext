@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
+version: 2
+
 force_token: github
 
 before:
@@ -37,3 +39,6 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
+
+release:
+  draft: true
