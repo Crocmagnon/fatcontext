@@ -62,6 +62,10 @@ func (r *runner) run(pass *analysis.Pass) (interface{}, error) {
 			return
 		}
 
+		if body == nil {
+			return
+		}
+
 		assignStmt := findNestedContext(pass, node, body.List)
 		if assignStmt == nil {
 			return
