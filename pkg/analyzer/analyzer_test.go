@@ -23,6 +23,10 @@ func TestAnalyzer(t *testing.T) {
 			dir:  "no_structpointer",
 		},
 		{
+			desc: "no func decl",
+			dir:  "cgo",
+		},
+		{
 			desc: "func decl",
 			dir:  "common",
 			options: map[string]string{
