@@ -23,10 +23,6 @@ func TestAnalyzer(t *testing.T) {
 			dir:  "no_structpointer",
 		},
 		{
-			desc: "no func decl",
-			dir:  "cgo",
-		},
-		{
 			desc: "func decl",
 			dir:  "common",
 			options: map[string]string{
@@ -55,7 +51,13 @@ func TestAnalyzer(t *testing.T) {
 				}
 			}
 
-			analysistest.Run(t, analysistest.TestData(), a, test.dir)
+			analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), a, test.dir)
 		})
 	}
+}
+
+func TestAnalyzer_cgo(t *testing.T) {
+	a := analyzer.NewAnalyzer()
+
+	analysistest.Run(t, analysistest.TestData(), a, "cgo")
 }
