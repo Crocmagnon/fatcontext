@@ -6,6 +6,10 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    groups:
+      github-actions:
+        patterns:
+          - "*"  # Group all updates into a single larger pull request.
   - package-ecosystem: "gomod"
     directory: "/"
     schedule:
