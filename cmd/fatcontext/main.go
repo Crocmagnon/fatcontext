@@ -1,3 +1,4 @@
+// Package main runs the analyzer. It's the CLI entrypoint.
 package main
 
 import (

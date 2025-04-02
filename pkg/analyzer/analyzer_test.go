@@ -9,6 +9,8 @@ import (
 )
 
 func TestAnalyzer(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		desc    string
 		dir     string
@@ -42,21 +44,23 @@ func TestAnalyzer(t *testing.T) {
 		t.Run(test.desc+"_"+test.dir, func(t *testing.T) {
 			t.Parallel()
 
-			a := analyzer.NewAnalyzer()
+			anlzr := analyzer.NewAnalyzer()
 
 			for k, v := range test.options {
-				err := a.Flags.Set(k, v)
+				err := anlzr.Flags.Set(k, v)
 				if err != nil {
 					t.Fatal(err)
 				}
 			}
 
-			analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), a, test.dir)
+			analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), anlzr, test.dir)
 		})
 	}
 }
 
 func TestAnalyzer_cgo(t *testing.T) {
+	t.Parallel()
+
 	a := analyzer.NewAnalyzer()
 
 	analysistest.Run(t, analysistest.TestData(), a, "cgo")
