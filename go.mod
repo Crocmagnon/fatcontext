@@ -1,7 +1,6 @@
 module github.com/Crocmagnon/fatcontext
 
-go 1.22.0
-toolchain go1.24.1
+go 1.23.0
 
 require golang.org/x/tools v0.31.0
 
