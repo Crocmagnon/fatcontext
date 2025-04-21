@@ -12,7 +12,7 @@ They can lead to performance issues, as documented here: https://gabnotes.org/fa
 `fatcontext` is available in `golangci-lint` since v1.58.0.
 
 ```bash
-go install github.com/Crocmagnon/fatcontext/cmd/fatcontext@latest
+go install go.augendre.info/fatcontext/cmd/fatcontext@latest
 fatcontext ./...
 ```
 
