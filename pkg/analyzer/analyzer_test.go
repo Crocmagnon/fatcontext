@@ -5,7 +5,7 @@ import (
 
 	"golang.org/x/tools/go/analysis/analysistest"
 
-	"github.com/Crocmagnon/fatcontext/pkg/analyzer"
+	"go.augendre.info/fatcontext/pkg/analyzer"
 )
 
 func TestAnalyzer(t *testing.T) {

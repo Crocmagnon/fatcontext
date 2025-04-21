@@ -4,7 +4,7 @@ package main
 import (
 	"golang.org/x/tools/go/analysis/singlechecker"
 
-	"github.com/Crocmagnon/fatcontext/pkg/analyzer"
+	"go.augendre.info/fatcontext/pkg/analyzer"
 )
 
 func main() {

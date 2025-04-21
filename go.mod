@@ -1,4 +1,4 @@
-module github.com/Crocmagnon/fatcontext
+module go.augendre.info/fatcontext
 
 go 1.23.0
 

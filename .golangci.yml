@@ -15,4 +15,4 @@ formatters:
   settings:
     goimports:
       local-prefixes:
-        - github.com/Crocmagnon/fatcontext
+        - go.augendre.info/fatcontext
