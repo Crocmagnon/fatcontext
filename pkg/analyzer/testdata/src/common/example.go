@@ -7,6 +7,7 @@ import (
 
 func example() {
 	ctx := context.Background()
+	ctx2 := context.Background()
 
 	for i := 0; i < 10; i++ {
 		ctx := context.WithValue(ctx, "key", i)
@@ -16,6 +17,15 @@ func example() {
 	for i := 0; i < 10; i++ {
 		ctx = context.WithValue(ctx, "key", i) // want "nested context in loop"
 		ctx = context.WithValue(ctx, "other", "val")
+	}
+
+	for i := 0; i < 10; i++ {
+		ctx = context.Background()
+		// This is fine because the first action was to re-assign to a known empty context.
+		ctx = context.WithValue(ctx, "key", i)
+		ctx = context.WithValue(ctx, "other", "val")
+		// Not OK because this var has NOT been re-assigned to a known empty context.
+		ctx2 = context.WithValue(ctx2, "key", i) // want "nested context in loop"
 	}
 
 	for item := range []string{"one", "two", "three"} {
@@ -241,11 +251,29 @@ func testCasesInit(t *testing.T) {
 			ctx: context.WithValue(context.Background(), "key", "value"),
 		},
 	}
+
+	// This is fine because the first action is to re-assign to a known empty context.
 	for _, tc := range cases {
 		t.Run("some test", func(t *testing.T) {
 			if tc.ctx == nil {
 				tc.ctx = context.Background()
+				tc.ctx = context.WithValue(tc.ctx, "key", "value")
 			}
 		})
 	}
 }
+
+var (
+	globalCtx    context.Context
+	globalCancel context.CancelFunc
+)
+
+func BeforeSuite(_ func()) interface{} {
+	return nil
+}
+
+// This is fine because the first action is to re-assign to a known empty context.
+var _ = BeforeSuite(func() {
+	globalCtx = context.TODO()
+	globalCtx, globalCancel = context.WithCancel(globalCtx)
+})
