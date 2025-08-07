@@ -53,7 +53,7 @@ func TestAnalyzer(t *testing.T) {
 				}
 			}
 
-			analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), anlzr, test.dir)
+			analysistest.Run(t, analysistest.TestData(), anlzr, test.dir)
 		})
 	}
 }
@@ -64,4 +64,12 @@ func TestAnalyzer_cgo(t *testing.T) {
 	a := analyzer.NewAnalyzer()
 
 	analysistest.Run(t, analysistest.TestData(), a, "cgo")
+}
+
+func TestSuggestedFixes(t *testing.T) {
+	t.Parallel()
+
+	a := analyzer.NewAnalyzer()
+
+	analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), a, "suggestedfix")
 }
