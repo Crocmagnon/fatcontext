@@ -1,0 +1,17 @@
+package suggestedfix
+
+import "context"
+
+func _() {
+	ctx := context.Background()
+
+	for i := 0; i < 10; i++ {
+		ctx := context.WithValue(ctx, "key", i)
+		ctx = context.WithValue(ctx, "other", "val")
+	}
+
+	for i := 0; i < 10; i++ {
+		ctx := context.WithValue(ctx, "key", i) // want "nested context in loop"
+		ctx = context.WithValue(ctx, "other", "val")
+	}
+}

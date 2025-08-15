@@ -6,6 +6,11 @@ linters:
   disable:
     - depguard
     - exhaustruct
+    - wsl
+    - noinlineerr
+  settings:
+    cyclop:
+      max-complexity: 20
 formatters:
   enable:
     - goimports
