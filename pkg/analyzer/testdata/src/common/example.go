@@ -2,6 +2,7 @@ package common
 
 import (
 	"context"
+	"fmt"
 	"testing"
 )
 
@@ -76,6 +77,23 @@ func example() {
 	// detects contexts wrapped in function literals (this is risky as function literals can be called multiple times)
 	_ = func() {
 		ctx = wrapContext(ctx) // want "nested context in function literal"
+	}
+
+	// this is fine because context.Background is an empty context
+	_ = func() {
+		ctx = context.Background()
+	}
+
+	_ = func(tb testing.TB) {
+		ctx = tb.Context()
+	}
+
+	_ = func(b *testing.B) {
+		ctx = b.Context()
+	}
+
+	_ = func(t *testing.T) {
+		ctx = t.Context()
 	}
 
 	// this is fine because the context is created in the loop
@@ -277,3 +295,22 @@ var _ = BeforeSuite(func() {
 	globalCtx = context.TODO()
 	globalCtx, globalCancel = context.WithCancel(globalCtx)
 })
+
+func TestContext(t *testing.T) {
+	tests := map[string]struct {
+		ctx context.Context
+	}{
+		"WithContext":    {ctx: context.Background()},
+		"WithoutContext": {},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			// Default to test context.
+			if tc.ctx == nil {
+				tc.ctx = t.Context()
+			}
+			fmt.Println(name, tc.ctx)
+		})
+	}
+}
