@@ -6,4 +6,3 @@ run = "pre-commit run --all-files"
 
 [tasks.test]
 run = "go test -race -v ./..."
-

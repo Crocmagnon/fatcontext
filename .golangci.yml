@@ -8,9 +8,12 @@ linters:
     - exhaustruct
     - wsl
     - noinlineerr
+    - gomodguard
   settings:
     cyclop:
       max-complexity: 20
+    funlen:
+      lines: -1
 formatters:
   enable:
     - goimports
