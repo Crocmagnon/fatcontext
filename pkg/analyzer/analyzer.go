@@ -62,7 +62,7 @@ type runner struct {
 	CheckFunctionLiterals  bool
 }
 
-func (r *runner) run(pass *analysis.Pass) (interface{}, error) {
+func (r *runner) run(pass *analysis.Pass) (any, error) {
 	inspctr, typeValid := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 	if !typeValid {
 		return nil, errInvalidAnalysis
@@ -287,7 +287,7 @@ func getStmtList(stmt ast.Stmt) []ast.Stmt {
 }
 
 // render returns the pretty-print of the given node.
-func render(fset *token.FileSet, x interface{}) ([]byte, error) {
+func render(fset *token.FileSet, x any) ([]byte, error) {
 	var buf bytes.Buffer
 
 	err := printer.Fprint(&buf, fset, x)
