@@ -1,6 +1,3 @@
-ci:
-  skip: [golangci-lint-full, go-test]
-
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
@@ -8,15 +5,17 @@ repos:
       - id: check-yaml
       - id: end-of-file-fixer
       - id: trailing-whitespace
-  - repo: https://github.com/golangci/golangci-lint
-    rev: v2.12.2
-    hooks:
-      - id: golangci-lint-full
   - repo: local
     hooks:
+      - id: golangci-lint
+        name: golangci-lint
+        language: system
+        types_or: [go]
+        pass_filenames: false
+        entry: mise run lint
       - id: go-test
         name: go test ./...
-        language: golang
+        language: system
         types_or: [go]
         pass_filenames: false
         entry: mise run test

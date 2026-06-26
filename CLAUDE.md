@@ -13,7 +13,8 @@ also vendored into `golangci-lint` (since v1.58.0).
 
 - Run tests: `mise run test` (`go test -race -v ./...`)
 - Run a single test: `go test -race -run TestSuggestedFixes ./pkg/analyzer/`
-- Lint (runs pre-commit, incl. golangci-lint + tests): `mise run lint`
+- Lint (golangci-lint with autofix): `mise run lint`
+- Run the full hook suite (file hooks + golangci-lint + tests): `prek run --all-files`
 - Build the CLI: `go build ./cmd/fatcontext`
 - Release: push a git tag (`git tag -a vX.Y.Z -m "vX.Y.Z" && git push --follow-tags`),
   which triggers GoReleaser via GitHub Actions.
