@@ -38,6 +38,20 @@ func TestAnalyzer(t *testing.T) {
 				analyzer.FlagCheckStructPointers: "true",
 			},
 		},
+		{
+			desc: "loops disabled",
+			dir:  "no_loops",
+			options: map[string]string{
+				analyzer.FlagCheckLoops: "false",
+			},
+		},
+		{
+			desc: "function literals disabled",
+			dir:  "no_function_literals",
+			options: map[string]string{
+				analyzer.FlagCheckFunctionLiterals: "false",
+			},
+		},
 	}
 
 	for _, test := range testCases {
