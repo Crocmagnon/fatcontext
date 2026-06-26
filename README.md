@@ -75,7 +75,8 @@ pre-commit install
 
 Run tests & linter:
 ```bash
-make lint test
+mise run lint
+mise run test
 ```
 
 To release, just publish a git tag:

@@ -11,9 +11,9 @@ also vendored into `golangci-lint` (since v1.58.0).
 
 ## Commands
 
-- Run tests: `make test` (`go test -race -v ./...`)
+- Run tests: `mise run test` (`go test -race -v ./...`)
 - Run a single test: `go test -race -run TestSuggestedFixes ./pkg/analyzer/`
-- Lint (runs pre-commit, incl. golangci-lint + tests): `make lint`
+- Lint (runs pre-commit, incl. golangci-lint + tests): `mise run lint`
 - Build the CLI: `go build ./cmd/fatcontext`
 - Release: push a git tag (`git tag -a vX.Y.Z -m "vX.Y.Z" && git push --follow-tags`),
   which triggers GoReleaser via GitHub Actions.
