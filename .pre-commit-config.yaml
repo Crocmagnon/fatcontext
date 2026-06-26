@@ -18,4 +18,5 @@ repos:
         name: go test ./...
         language: golang
         types_or: [go]
-        entry: make test
+        pass_filenames: false
+        entry: mise run test

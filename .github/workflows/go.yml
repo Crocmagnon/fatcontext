@@ -25,10 +25,11 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version: ${{ matrix.go }}
+      - uses: jdx/mise-action@v4
       - name: Build
         run: go build -v ./...
       - name: Test
-        run: make test
+        run: mise run test
   coverage:
     name: coverage
     permissions:
