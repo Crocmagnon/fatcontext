@@ -42,6 +42,30 @@ func notOk() {
 }
 ```
 
+## Configuration
+
+The linter exposes the following options, all available on the command line:
+
+| Option                     | Default    | Description                                                              |
+|----------------------------|------------|--------------------------------------------------------------------------|
+| `check-loops`              | `true`     | Detect fat contexts created inside loops.                                |
+| `check-function-literals`  | `true`     | Detect fat contexts created inside function literals.                    |
+| `check-struct-pointers`    | `false`    | Detect potential fat contexts created through struct pointers.           |
+
+```bash
+# Disable loop detection (enabled by default)
+fatcontext -check-loops=false ./...
+
+# Disable function literal detection (enabled by default)
+fatcontext -check-function-literals=false ./...
+
+# Enable struct pointer detection (disabled by default)
+fatcontext -check-struct-pointers ./...
+```
+
+When used through `golangci-lint`, these options are configured in the linter's
+settings rather than on the command line.
+
 ## Development
 
 Setup pre-commit locally:
