@@ -2,7 +2,7 @@
 CGO_ENABLED = 1
 
 [tools]
-golangci-lint = "2.12.2"
+golangci-lint = "2.13.2"
 goreleaser = "2"
 prek = "latest"
 
