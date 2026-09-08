@@ -6,6 +6,7 @@ linters:
   disable:
     - depguard
     - exhaustruct
+    - exhaustruct_v5
     - wsl
     - noinlineerr
     - gomodguard
