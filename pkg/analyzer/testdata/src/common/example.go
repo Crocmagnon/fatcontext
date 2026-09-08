@@ -314,3 +314,54 @@ func TestContext(t *testing.T) {
 		})
 	}
 }
+
+// A deferred function literal runs at most once, so it cannot grow the context.
+func deferredShutdown(ctx context.Context) {
+	defer func() {
+		ctx = wrapContext(ctx)
+		fmt.Println(ctx)
+	}()
+}
+
+// Same for cleanups registered on the testing types.
+func cleanups(t *testing.T, b *testing.B, tb testing.TB, ctx context.Context) {
+	t.Cleanup(func() {
+		ctx = wrapContext(ctx)
+	})
+
+	b.Cleanup(func() {
+		ctx = wrapContext(ctx)
+	})
+
+	tb.Cleanup(func() {
+		ctx = wrapContext(ctx)
+	})
+}
+
+// Registering a run-once function literal in a loop runs it once per iteration,
+// which does grow the captured context.
+func runOnceInLoop(t *testing.T, ctx context.Context) {
+	for i := 0; i < 10; i++ {
+		defer func() {
+			ctx = wrapContext(ctx) // want "nested context in function literal"
+		}()
+
+		t.Cleanup(func() {
+			ctx = wrapContext(ctx) // want "nested context in function literal"
+		})
+	}
+}
+
+// The function literal is an argument here, `takesFunc` is free to call it any
+// number of times.
+func deferredCall(ctx context.Context) {
+	defer takesFunc(func() {
+		ctx = wrapContext(ctx) // want "nested context in function literal"
+	})
+
+	go func() {
+		ctx = wrapContext(ctx) // want "nested context in function literal"
+	}()
+}
+
+func takesFunc(_ func()) {}
