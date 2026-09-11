@@ -4,7 +4,7 @@
 [![Go Coverage](https://github.com/Crocmagnon/fatcontext/wiki/coverage.svg)](https://github.com/Crocmagnon/fatcontext/wiki/Coverage)
 
 `fatcontext` is a Go linter which detects potential fat contexts in loops or function literals.
-They can lead to performance issues, as documented here: https://gabnotes.fr/fat-contexts/
+They can lead to performance issues, as documented here: https://gabnotes.fr/posts/context-induced-performance-bottleneck-in-go
 
 ## Installation / usage
 
